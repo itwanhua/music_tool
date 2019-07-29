@@ -21,8 +21,8 @@ def music_play(music):
         print("\n正在播放: %s" % music_name)
         pygame.mixer.music.play()
         return music_name
-    except:
-        pass
+    except Exception as e:
+        print(e)
 
 def pause_music():
     print("暂停播放\n")
@@ -40,19 +40,30 @@ def skip_music():
     i = random.randint(0, len(music_list)-1)
     music_name = music_list[i]
     music_play(music_name)
-
+    
+def get_music():
+    # 获取当前文件所在的绝对路径
+    file_path = os.path.split(os.path.realpath(__file__))[0]
+    try:
+        os.mkdir(file_path, "music") # 无music文件夹则创建
+    except:
+        pass
+    music_path = os.path.join(file_path, "music")
+    # music_path = './music'
+    music_list = []
+    f = os.listdir(music_path) # 获取所有的文件名列表
+    for file_name in f:
+        file_format = file_name[-4:]
+        if file_format.lower() in (".mp3", ".wav"): # 只将其中的.mp3文件写入music_list
+            music = file_name[:-4]
+            music_list.append(music)
+    return music_list
 
 
 
 if __name__ == "__main__":
-    music_path = './music'
-    music_list = []
-    f = os.listdir(music_path)
-    for file_name in f:
-        music = file_name[:-4]
-        music_list.append(music)
+    music_list = get_music()
     menu()
-
     while True:
         s = input("\n输入菜单序号：")
         if s == "0":
